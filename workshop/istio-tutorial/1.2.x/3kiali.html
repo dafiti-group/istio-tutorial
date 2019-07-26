@@ -29,11 +29,11 @@
           <div class="navbar-link">Project</div>
           <div class="navbar-dropdown">
             <div class="navbar-item"><strong>GitHub</strong></div>
-            <a class="navbar-item" href="https://github.com/redhat-developer-demos/istio-tutorial">Istio Tutorial Repository</a>
-            <a class="navbar-item" href="https://github.com/redhat-developer-demos/istio-tutorial/issues">Istio Tutorial Issue Tracker</a>
+            <a class="navbar-item" href="https://github.com/rafabene/istio-tutorial">Istio Tutorial Repository</a>
+            <a class="navbar-item" href="https://github.com/rafabene/istio-tutorial/issues">Istio Tutorial Issue Tracker</a>
           </div>
         </div>
-        <a class="navbar-item" href="https://twitter.com/rhdevelopers">
+        <a class="navbar-item" href="https://twitter.com/rafabene">
           <span class="icon">
             <svg aria-hidden="true" data-icon="twitter" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path fill="#57aaee" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path>
@@ -282,141 +282,14 @@ refresher.</p>
 <h2 id="howkiali"><a class="anchor" href="#howkiali"></a>How does Kiali work?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kiali taps into the data provided by Istio and OpenShift to generate its
+<p>Kiali taps into the data provided by Istio to generate its
 visualizations. It fetches ingress data (such as request tracing with Jaeger),
 the listing and data of the services, health indexes, and so on.</p>
 </div>
 <div class="paragraph">
 <p>Kiali runs as a service together with Istio, and does not require any changes
-to Istio or Openshift configuration (besides the ones required to install
+to Istio  configuration (besides the ones required to install
 Istio).</p>
-</div>
-<div class="paragraph">
-<p>So now we can access Kiali, so
-let&#8217;s do it:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">open <a href="https://kiali-istio-system.apps.jconf-d4f8.openshiftworkshop.com/" class="bare">https://kiali-istio-system.apps.jconf-d4f8.openshiftworkshop.com/</a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-login.png" alt="Login Page"></span></p>
-</div>
-<div class="paragraph">
-<p>The default credentials are "admin/admin", but it&#8217;s recommended to change them
-before using it in production.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="generatingdata"><a class="anchor" href="#generatingdata"></a>Generating Sample Data</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To show the capabilities of Kiali, you&#8217;ll need an Istio-enabled application to
-be running. For this, we can use the <code>customer-tutorial</code> application we created
-earlier.</p>
-</div>
-<div class="paragraph">
-<p>To generate data for it, we can <code>curl</code> it with this command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl <a href="http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER" class="bare">http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER</a></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="servicegraph"><a class="anchor" href="#servicegraph"></a>Service Graph</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>After you login, you should see the Service Graph page:</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-service-graph.png" alt="Service Graph Page"></span></p>
-</div>
-<div class="paragraph">
-<p>It shows a graph with all the microservices, connected by the requests going
-through then. On this page, you can see how the services interact with each
-other.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="applications"><a class="anchor" href="#applications"></a>Applications</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Click the <code>Applications</code> link in the left navigation. On this page you can
-view a listing of all the services that are running in the cluster, and
-additional information about them, such as health status.</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-application-list.png" alt="Application Listing Page"></span></p>
-</div>
-<div class="paragraph">
-<p>Click on the "customer" application to see its details:</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-application-details.png" alt="Service Details"></span></p>
-</div>
-<div class="paragraph">
-<p>By hovering the icon on the Health section, you can see the health of a service
-(a service is considered healthy) when it&#8217;s online and responding to requests
-without errors:</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-application-health.png" alt="Health Status"></span></p>
-</div>
-<div class="paragraph">
-<p>By clicking on <code>Outbound Metrics</code> or <code>Inbound Metrics</code>, you can also see the
-metrics for an application, like so:</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-application-metrics.png" alt="Application Metrics"></span></p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="workloads"><a class="anchor" href="#workloads"></a>Workloads</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Click the <code>Workloads</code> link in the left navigation. On this page you can view
-a listing of all the workloads are present on your applications.</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-workload-list.png" alt="Workload Listing"></span></p>
-</div>
-<div class="paragraph">
-<p>Click on the <code>customer</code> workload. Here you can see details for the workload,
-such as the pods and services that are included in it:</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-workload-details.png" alt="Workload Details"></span></p>
-</div>
-<div class="paragraph">
-<p>By clicking <code>Outbound Metrics</code> and <code>Inbound Metrics</code>, you can check the
-metrics for the workload. The metrics are the same as the <code>Application</code> ones.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="services"><a class="anchor" href="#services"></a>Services</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Click on the <code>Services</code> link in the left navigation. Here, you can see the
-listing of all services.</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-service-list.png" alt="Service Listing"></span></p>
-</div>
-<div class="paragraph">
-<p>Click on the <code>customer</code> service. You can, on this page, see the details of
-the service, such as metrics, traces, workloads, virtual services,
-destination rules and so on:</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="_images/kiali-service-details.png" alt="Service Details"></span></p>
 </div>
 </div>
 </div>
@@ -424,7 +297,7 @@ destination rules and so on:</p>
 </main>
 </div>
 <footer class="footer">
-  <p>This content is brought to you by <a href="http://developers.redhat.com">Red Hat Developer</a> - Register today!.</p>
+  <p></p>
 </footer>
 <script src="../../_/js/site.js"></script>
 <script async src="../../_/js/vendor/highlight.js"></script>

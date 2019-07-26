@@ -29,11 +29,11 @@
           <div class="navbar-link">Project</div>
           <div class="navbar-dropdown">
             <div class="navbar-item"><strong>GitHub</strong></div>
-            <a class="navbar-item" href="https://github.com/redhat-developer-demos/istio-tutorial">Istio Tutorial Repository</a>
-            <a class="navbar-item" href="https://github.com/redhat-developer-demos/istio-tutorial/issues">Istio Tutorial Issue Tracker</a>
+            <a class="navbar-item" href="https://github.com/rafabene/istio-tutorial">Istio Tutorial Repository</a>
+            <a class="navbar-item" href="https://github.com/rafabene/istio-tutorial/issues">Istio Tutorial Issue Tracker</a>
           </div>
         </div>
-        <a class="navbar-item" href="https://twitter.com/rhdevelopers">
+        <a class="navbar-item" href="https://twitter.com/rafabene">
           <span class="icon">
             <svg aria-hidden="true" data-icon="twitter" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path fill="#57aaee" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path>
@@ -279,26 +279,24 @@ You may want to push some load onto the deployed applications in order to see so
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./scripts/run.sh <a href="http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER" class="bare">http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./scripts/run.sh</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">open <a href="http://grafana-istio-system.apps.jconf-d4f8.openshiftworkshop.com/d/TSEY6jLmk/istio-galley-dashboard?orgId=1" class="bare">http://grafana-istio-system.apps.jconf-d4f8.openshiftworkshop.com/d/TSEY6jLmk/istio-galley-dashboard?orgId=1</a>
-or
-firefox <a href="http://grafana-istio-system.apps.jconf-d4f8.openshiftworkshop.com/d/TSEY6jLmk/istio-galley-dashboard?orgId=1" class="bare">http://grafana-istio-system.apps.jconf-d4f8.openshiftworkshop.com/d/TSEY6jLmk/istio-galley-dashboard?orgId=1</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=grafana -o jsonpath='{.items[0].metadata.name}') 3000:3000 &amp;
+
+open <a href="http://localhost:3000/d/_GZa3UHWk/istio-mesh-dashboard?orgId=1" class="bare">http://localhost:3000/d/_GZa3UHWk/istio-mesh-dashboard?orgId=1</a></code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="_images/grafana1.png" alt="Grafana 1"></span></p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"><a href="http://grafana-istio-system.apps.jconf-d4f8.openshiftworkshop.com/d/UbsSZTDik/istio-workload-dashboard?refresh=5s&amp;orgId=1"" class="bare">http://grafana-istio-system.apps.jconf-d4f8.openshiftworkshop.com/d/UbsSZTDik/istio-workload-dashboard?refresh=5s&amp;orgId=1"</a></code></pre>
-</div>
+<div class="paragraph">
+<p>From the Grafana dashboard’s left hand corner navigation menu, you can navigate to Istio Workload Dashboard or visit <a href="http://localhost:3000/dashboard/db/istio-workload-dashboard" class="bare">http://localhost:3000/dashboard/db/istio-workload-dashboard</a> in your web browser.</p>
 </div>
 <div class="paragraph">
-<p>to check the "Workload of the services"</p>
+<p>The Istio Workload Dashboard will look similar to:</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="_images/grafana2.png" alt="Grafana 2"></span></p>
@@ -313,10 +311,36 @@ firefox <a href="http://grafana-istio-system.apps.jconf-d4f8.openshiftworkshop.c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">open <a href="http://prometheus-istio-system.apps.jconf-d4f8.openshiftworkshop.com/graph?g0.range_input=1m&amp;g0.stacked=1&amp;g0.expr=&amp;g0.tab=0"" class="bare">http://prometheus-istio-system.apps.jconf-d4f8.openshiftworkshop.com/graph?g0.range_input=1m&amp;g0.stacked=1&amp;g0.expr=&amp;g0.tab=0"</a>
-or
-firefox <a href="http://prometheus-istio-system.apps.jconf-d4f8.openshiftworkshop.com/graph?g0.range_input=1m&amp;g0.stacked=1&amp;g0.expr=&amp;g0.tab=0"" class="bare">http://prometheus-istio-system.apps.jconf-d4f8.openshiftworkshop.com/graph?g0.range_input=1m&amp;g0.stacked=1&amp;g0.expr=&amp;g0.tab=0"</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=prometheus -o jsonpath='{.items[0].metadata.name}') 9090:9090 &amp;
+
+open "http://localhost:9090/graph?g0.range_input=15m&amp;g0.stacked=1&amp;g0.expr=&amp;g0.tab=0"</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>In the Prometheus dashboard, add the following</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">istio_requests_total{destination_app="customer"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and select <code>Execute</code></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="_images/prometheus_custom_metric.png" alt="alt text"></span></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You may have to refresh the browser for the Prometheus graph to update. And you may wish to make the interval 5m (5 minutes) as seen in the screenshot above.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect2">
 <h3 id="containermemory"><a class="anchor" href="#containermemory"></a>Containers memory</h3>
@@ -357,9 +381,9 @@ firefox <a href="http://prometheus-istio-system.apps.jconf-d4f8.openshiftworksho
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">open <a href="https://jaeger-query-istio-system.apps.jconf-d4f8.openshiftworkshop.com/" class="bare">https://jaeger-query-istio-system.apps.jconf-d4f8.openshiftworkshop.com/</a>
-or
-firefox <a href="https://jaeger-query-istio-system.apps.jconf-d4f8.openshiftworkshop.com/" class="bare">https://jaeger-query-istio-system.apps.jconf-d4f8.openshiftworkshop.com/</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=jaeger -o jsonpath='{.items[0].metadata.name}') 15032:16686 &amp;
+
+open <a href="http://localhost:15032/jaeger/search" class="bare">http://localhost:15032/jaeger/search</a></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -371,7 +395,7 @@ firefox <a href="https://jaeger-query-istio-system.apps.jconf-d4f8.openshiftwork
 </main>
 </div>
 <footer class="footer">
-  <p>This content is brought to you by <a href="http://developers.redhat.com">Red Hat Developer</a> - Register today!.</p>
+  <p></p>
 </footer>
 <script src="../../_/js/site.js"></script>
 <script async src="../../_/js/vendor/highlight.js"></script>

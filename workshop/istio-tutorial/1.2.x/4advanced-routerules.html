@@ -29,11 +29,11 @@
           <div class="navbar-link">Project</div>
           <div class="navbar-dropdown">
             <div class="navbar-item"><strong>GitHub</strong></div>
-            <a class="navbar-item" href="https://github.com/redhat-developer-demos/istio-tutorial">Istio Tutorial Repository</a>
-            <a class="navbar-item" href="https://github.com/redhat-developer-demos/istio-tutorial/issues">Istio Tutorial Issue Tracker</a>
+            <a class="navbar-item" href="https://github.com/rafabene/istio-tutorial">Istio Tutorial Repository</a>
+            <a class="navbar-item" href="https://github.com/rafabene/istio-tutorial/issues">Istio Tutorial Issue Tracker</a>
           </div>
         </div>
-        <a class="navbar-item" href="https://twitter.com/rhdevelopers">
+        <a class="navbar-item" href="https://twitter.com/rafabene">
           <span class="icon">
             <svg aria-hidden="true" data-icon="twitter" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path fill="#57aaee" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path>
@@ -301,8 +301,8 @@ The baggage header for user agent has following form <code>baggage-user-agent: &
 <h3 id="alltorecommendationv1"><a class="anchor" href="#alltorecommendationv1"></a>Set recommendation to all v1</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/redhat-developer-demos/istio-tutorial/blob/master/istiofiles/destination-rule-recommendation-v1-v2.yml">istiofiles/destination-rule-recommendation-v1-v2.yml</a> -n tutorial-$WORKSHOP_USER
-kubectl create -f <a href="https://github.com/redhat-developer-demos/istio-tutorial/blob/master/istiofiles/virtual-service-recommendation-v1.yml">istiofiles/virtual-service-recommendation-v1.yml</a> -n tutorial-$WORKSHOP_USER</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/rafabene/istio-tutorial/blob/master/istiofiles/destination-rule-recommendation-v1-v2.yml">istiofiles/destination-rule-recommendation-v1-v2.yml</a> -n tutorial-$WORKSHOP_USER
+kubectl create -f <a href="https://github.com/rafabene/istio-tutorial/blob/master/istiofiles/virtual-service-recommendation-v1.yml">istiofiles/virtual-service-recommendation-v1.yml</a> -n tutorial-$WORKSHOP_USER</code></pre>
 </div>
 </div>
 </div>
@@ -310,7 +310,7 @@ kubectl create -f <a href="https://github.com/redhat-developer-demos/istio-tutor
 <h3 id="safaritov2"><a class="anchor" href="#safaritov2"></a>Set Safari users to v2</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl replace -f <a href="https://github.com/redhat-developer-demos/istio-tutorial/blob/master/istiofiles/virtual-service-safari-recommendation-v2.yml">istiofiles/virtual-service-safari-recommendation-v2.yml</a> -n tutorial-$WORKSHOP_USER
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl replace -f <a href="https://github.com/rafabene/istio-tutorial/blob/master/istiofiles/virtual-service-safari-recommendation-v2.yml">istiofiles/virtual-service-safari-recommendation-v2.yml</a> -n tutorial-$WORKSHOP_USER
 
 kubectl get virtualservice -n tutorial-$WORKSHOP_USER</code></pre>
 </div>
@@ -325,15 +325,22 @@ kubectl get virtualservice -n tutorial-$WORKSHOP_USER</code></pre>
 <p>There are two ways to get the URL for your browser:</p>
 </div>
 <div class="paragraph">
-<p>Open the url <a href="http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com" class="bare">http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com</a> in your broswer</p>
+<p>Open the url Customer Gateway in your broswer</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+open <a href="http://$(minikube" class="bare">http://$(minikube</a> ip):$INGRESS_PORT/customer</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>You can also attempt to use the curl -A command to test with different user-agent strings.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -A Safari istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER
-curl -A Firefox istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -A Safari <a href="http://$(minikube" class="bare">http://$(minikube</a> ip):$INGRESS_PORT/customer$WORKSHOP_USER
+curl -A Firefox <a href="http://$(minikube" class="bare">http://$(minikube</a> ip):$INGRESS_PORT/customer$WORKSHOP_USER</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -357,7 +364,7 @@ curl -A Firefox istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworks
 <h3 id="mobiletov2"><a class="anchor" href="#mobiletov2"></a>Set mobile users to v2</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/redhat-developer-demos/istio-tutorial/blob/master/istiofiles/virtual-service-mobile-recommendation-v2.yml">istiofiles/virtual-service-mobile-recommendation-v2.yml</a> -n tutorial-$WORKSHOP_USER
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/rafabene/istio-tutorial/blob/master/istiofiles/virtual-service-mobile-recommendation-v2.yml">istiofiles/virtual-service-mobile-recommendation-v2.yml</a> -n tutorial-$WORKSHOP_USER
 
 curl -A "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4(KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5" <a href="http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER" class="bare">http://istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER</a></code></pre>
 </div>
@@ -387,9 +394,7 @@ kubectl delete -f istiofiles/virtual-service-mobile-recommendation-v2.yml -n tut
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get pods -l app=recommendation -n tutorial-$WORKSHOP_USER
-or
-kubectl get pods -l app=recommendation -n tutorial-$WORKSHOP_USER</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get pods -l app=recommendation -n tutorial-$WORKSHOP_USER</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -415,10 +420,12 @@ if so run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/redhat-developer-demos/istio-tutorial/blob/master/istiofiles/destination-rule-recommendation-v1-v2.yml">istiofiles/destination-rule-recommendation-v1-v2.yml</a> -n tutorial-$WORKSHOP_USER
-kubectl create -f <a href="https://github.com/redhat-developer-demos/istio-tutorial/blob/master/istiofiles/virtual-service-recommendation-v1-mirror-v2.yml">istiofiles/virtual-service-recommendation-v1-mirror-v2.yml</a> -n tutorial-$WORKSHOP_USER
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/rafabene/istio-tutorial/blob/master/istiofiles/destination-rule-recommendation-v1-v2.yml">istiofiles/destination-rule-recommendation-v1-v2.yml</a> -n tutorial-$WORKSHOP_USER
+kubectl create -f <a href="https://github.com/rafabene/istio-tutorial/blob/master/istiofiles/virtual-service-recommendation-v1-mirror-v2.yml">istiofiles/virtual-service-recommendation-v1-mirror-v2.yml</a> -n tutorial-$WORKSHOP_USER
 
-curl istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER</code></pre>
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+curl $(minikube ip):$INGRESS_PORT/customer$WORKSHOP_USER</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -426,9 +433,7 @@ curl istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/cus
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc logs -f `oc get pods -n tutorial-$WORKSHOP_USER|grep recommendation-v2|awk '{ print $1 }'` -c recommendation -n tutorial-$WORKSHOP_USER
-or
-kubectl logs -f `oc get pods -n tutorial-$WORKSHOP_USER|grep recommendation-v2|awk '{ print $1 }'` -c recommendation -n tutorial-$WORKSHOP_USER</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl logs -f `kubectl get pods -n tutorial-$WORKSHOP_USER|grep recommendation-v2|awk '{ print $1 }'` -c recommendation -n tutorial-$WORKSHOP_USER</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -461,9 +466,7 @@ kubectl delete -f istiofiles/virtual-service-recommendation-v1-mirror-v2.yml -n 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc scale deployment recommendation-v2 --replicas=2 -n tutorial-$WORKSHOP_USER
-or
-kubectl scale deployment recommendation-v2 --replicas=2 -n tutorial-$WORKSHOP_USER</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl scale deployment recommendation-v2 --replicas=2 -n tutorial-$WORKSHOP_USER</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -472,7 +475,9 @@ and curl the customer endpoint many times</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl istio-ingressgateway-istio-system.apps.jconf-d4f8.openshiftworkshop.com/customer$WORKSHOP_USER</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+curl $(minikube ip):$INGRESS_PORT/customer$WORKSHOP_USER</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -480,12 +485,7 @@ and curl the customer endpoint many times</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc scale deployment recommendation-v2 --replicas=3 -n tutorial-$WORKSHOP_USER
-$ oc get pods -n tutorial-$WORKSHOP_USER
-
-or
-
-$ kubectl scale deployment recommendation-v2 --replicas=3 -n tutorial-$WORKSHOP_USER
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ kubectl scale deployment recommendation-v2 --replicas=3 -n tutorial-$WORKSHOP_USER
 $ kubectl get pods -n tutorial-$WORKSHOP_USER
 
 
@@ -503,7 +503,7 @@ recommendation-v2-2815683430-tptf2   2/2       Running   0          33m</code></
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./scripts/run.sh <a href="http://customer-tutorial-$WORKSHOP_USER.apps.jconf-d4f8.openshiftworkshop.com" class="bare">http://customer-tutorial-$WORKSHOP_USER.apps.jconf-d4f8.openshiftworkshop.com</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./scripts/run.sh</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -526,7 +526,7 @@ customer =&gt; preference =&gt; recommendation v2 from '2819441432-bs5ck': 182</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/redhat-developer-demos/istio-tutorial/blob/master/istiofiles/destination-rule-recommendation_lb_policy_app.yml">istiofiles/destination-rule-recommendation_lb_policy_app.yml</a> -n tutorial-$WORKSHOP_USER</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create -f <a href="https://github.com/rafabene/istio-tutorial/blob/master/istiofiles/destination-rule-recommendation_lb_policy_app.yml">istiofiles/destination-rule-recommendation_lb_policy_app.yml</a> -n tutorial-$WORKSHOP_USER</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -553,8 +553,6 @@ customer =&gt; preference =&gt; recommendation v2 from '2819441432-rg45q': 14</c
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl delete -f istiofiles/destination-rule-recommendation_lb_policy_app.yml -n tutorial-$WORKSHOP_USER
 
-oc scale deployment recommendation-v2 --replicas=1 -n tutorial-$WORKSHOP_USER
-or
 kubectl scale deployment recommendation-v2 --replicas=1 -n tutorial-$WORKSHOP_USER</code></pre>
 </div>
 </div>
@@ -565,7 +563,7 @@ kubectl scale deployment recommendation-v2 --replicas=1 -n tutorial-$WORKSHOP_US
 </main>
 </div>
 <footer class="footer">
-  <p>This content is brought to you by <a href="http://developers.redhat.com">Red Hat Developer</a> - Register today!.</p>
+  <p></p>
 </footer>
 <script src="../../_/js/site.js"></script>
 <script async src="../../_/js/vendor/highlight.js"></script>
