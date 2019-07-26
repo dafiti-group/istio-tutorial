@@ -1,25 +1,31 @@
-apiVersion: "config.istio.io/v1alpha2"
-kind: listchecker
+apiVersion: config.istio.io/v1alpha2
+kind: handler
 metadata:
-  name: preferencewhitelist
+  name: whitelist
 spec:
-  overrides: ["recommendation"]
-  blacklist: false
+  compiledAdapter: listchecker
+  params:
+    # providerUrl: ordinarily black and white lists are maintained
+    # externally and fetched asynchronously using the providerUrl.
+    overrides: ["recommendation"]  # overrides provide a static list
+    blacklist: false
 ---
-apiVersion: "config.istio.io/v1alpha2"
-kind: listentry
+apiVersion: config.istio.io/v1alpha2
+kind: instance
 metadata:
-  name: preferencesource
+  name: appname
 spec:
-  value: source.labels["app"]
+  compiledTemplate: listentry
+  params:
+    value: source.labels["app"]
 ---
-apiVersion: "config.istio.io/v1alpha2"
+apiVersion: config.istio.io/v1alpha2
 kind: rule
 metadata:
-  name: checkfromcustomer
+  name: checkversion
 spec:
   match: destination.labels["app"] == "preference"
   actions:
-  - handler: preferencewhitelist.listchecker
-    instances:
-    - preferencesource.listentry
+  - handler: whitelist
+    instances: [ appname ]
+---

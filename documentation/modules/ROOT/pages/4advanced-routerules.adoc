@@ -50,14 +50,21 @@ and test with a Firefox browser, it should only see v1 responses from recommenda
 
 There are two ways to get the URL for your browser:
 
-Open the url http://istio-ingressgateway-istio-system.{appdomain} in your broswer 
+Open the url Customer Gateway in your broswer 
+
+[source,bash,subs="+macros,+attributes"]
+----
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+open http://$(minikube ip):$INGRESS_PORT/customer
+----
 
 You can also attempt to use the curl -A command to test with different user-agent strings. 
 
 [source,bash,subs="+macros,+attributes"]
 ----
-curl -A Safari istio-ingressgateway-istio-system.{appdomain}/{path}
-curl -A Firefox istio-ingressgateway-istio-system.{appdomain}/{path}
+curl -A Safari http://$(minikube ip):$INGRESS_PORT/{path}
+curl -A Firefox http://$(minikube ip):$INGRESS_PORT/{path}
 ----
 
 You can describe the virtualservice to see its configuration
@@ -105,8 +112,6 @@ or you can run:
 
 [source,bash,subs="+macros,+attributes"]
 ----
-oc get pods -l app=recommendation -n tutorial{namespace-suffix}
-or 
 kubectl get pods -l app=recommendation -n tutorial{namespace-suffix}
 ----
 
@@ -135,16 +140,16 @@ Make sure you are in the main directory of "istio-tutorial"
 kubectl create -f link:{github-repo}/{istiofiles-dir}/destination-rule-recommendation-v1-v2.yml[istiofiles/destination-rule-recommendation-v1-v2.yml] -n tutorial{namespace-suffix}
 kubectl create -f link:{github-repo}/{istiofiles-dir}/virtual-service-recommendation-v1-mirror-v2.yml[istiofiles/virtual-service-recommendation-v1-mirror-v2.yml] -n tutorial{namespace-suffix}
 
-curl istio-ingressgateway-istio-system.{appdomain}/{path}
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+curl $(minikube ip):$INGRESS_PORT/{path}
 ----
 
 Check the logs of recommendation-v2
 
 [source,bash,subs="+macros,+attributes"]
 ----
-oc logs -f `oc get pods -n tutorial{namespace-suffix}|grep recommendation-v2|awk '{ print $1 }'` -c recommendation -n tutorial{namespace-suffix}
-or
-kubectl logs -f `oc get pods -n tutorial{namespace-suffix}|grep recommendation-v2|awk '{ print $1 }'` -c recommendation -n tutorial{namespace-suffix}
+kubectl logs -f `kubectl get pods -n tutorial{namespace-suffix}|grep recommendation-v2|awk '{ print $1 }'` -c recommendation -n tutorial{namespace-suffix}
 ----
 
 === Clean up
@@ -172,8 +177,6 @@ Add another v2 pod to the mix
 
 [source,bash,subs="+macros,+attributes"]
 ----
-oc scale deployment recommendation-v2 --replicas=2 -n tutorial{namespace-suffix}
-or
 kubectl scale deployment recommendation-v2 --replicas=2 -n tutorial{namespace-suffix}
 ----
 
@@ -182,18 +185,15 @@ and curl the customer endpoint many times
 
 [source,bash,subs="+macros,+attributes"]
 ----
-curl istio-ingressgateway-istio-system.{appdomain}/{path}
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+curl $(minikube ip):$INGRESS_PORT/{path}
 ----
 
 Add a 3rd v2 pod to the mix
 
 [source,bash,subs="+macros,+attributes"]
 ----
-$ oc scale deployment recommendation-v2 --replicas=3 -n tutorial{namespace-suffix}
-$ oc get pods -n tutorial{namespace-suffix}
-
-or 
-
 $ kubectl scale deployment recommendation-v2 --replicas=3 -n tutorial{namespace-suffix}
 $ kubectl get pods -n tutorial{namespace-suffix}
 
@@ -211,7 +211,7 @@ Wait for those 2/2 (two containers in each pod) and then poll the customer endpo
 
 [source, bash,subs="+macros,+attributes"]
 ----
-./scripts/run.sh http://customer-tutorial{namespace-suffix}.{appdomain}
+./scripts/run.sh 
 ----
 
 The results should follow a fairly normal round-robin distribution pattern
@@ -258,7 +258,5 @@ customer => preference => recommendation v2 from '2819441432-rg45q': 14
 ----
 kubectl delete -f istiofiles/destination-rule-recommendation_lb_policy_app.yml -n tutorial{namespace-suffix}
 
-oc scale deployment recommendation-v2 --replicas=1 -n tutorial{namespace-suffix}
-or
 kubectl scale deployment recommendation-v2 --replicas=1 -n tutorial{namespace-suffix}
 ----

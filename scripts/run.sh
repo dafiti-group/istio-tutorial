@@ -1,9 +1,11 @@
 #!/bin/bash
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
 
 url=$1
 if [ -z "$url" ]
 then
-    url="istio-ingressgateway-istio-system.$(minishift ip).nip.io/customer"
+    url="$(minikube ip):$INGRESS_PORT/customer"
 fi
 
 while true

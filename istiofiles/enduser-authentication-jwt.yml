@@ -7,6 +7,8 @@ spec:
     - name: customer
     - name: preference
     - name: recommendation
+  peers:
+  - mtls:
   origins:
     - jwt:
         issuer: "testing@secure.istio.io"

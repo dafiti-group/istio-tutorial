@@ -23,18 +23,9 @@ Check the mTLS by _sniffing_ traffic between services, which is a bit more tedio
 
 [source, bash]
 ----
-CUSTOMER_POD=$(oc get pod | grep cust | awk '{ print $1}' ) # <1>
+CUSTOMER_POD=$(kubectl get pod | grep cust | awk '{ print $1}' ) <1>
 
-or in Kuberentes:
-
-CUSTOMER_POD=$(kubectl get pod | grep cust | awk '{ print $1}' )
-
-
-oc exec -it $CUSTOMER_POD -c istio-proxy /bin/bash # <2>
-
-or in Kubernetes:
-
-kubectl exec -it $CUSTOMER_POD -c istio-proxy /bin/bash 
+kubectl exec -it $CUSTOMER_POD -c istio-proxy /bin/bash  <2>
 
 # Inside pod shell
 
@@ -52,45 +43,14 @@ So now go to a terminal and execute:
 
 [source, bash, subs="+macros,+attributes"]
 ----
-curl http://istio-ingressgateway-istio-system.{appdomain}/{path}
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+curl $(minikube ip):$INGRESS_PORT/{path}
+
 customer => preference => recommendation v1 from 'b87789c58-mfrhr': 2
 ----
 
 Obviously, the response is exactly the same, but if you go to the terminal where you are executing `tcpdump`, you should see something like:
-
-[source, bash]
-----
-14:24:55.078222 IP (tos 0x0, ttl 64, id 32578, offset 0, flags [DF], proto TCP (6), length 967)
-    172.17.0.15.33260 > customer-7dcd544ff9-652ds.8080: Flags [P.], cksum 0x5bf5 (incorrect -> 0x595e), seq 2211080917:2211081832, ack 2232186801, win 391, options [nop,nop,TS val 5958433 ecr 5779275], length 915: HTTP
-E....B@.@._........
-......j...w.....[......
-.Z.!.X/K.............w$.?....&T.`n.....UX.C&)Cj....y..{.&..I..	..<.
-.....A..q.;...o.9+.4..;...6|".......M.4Wm.:}.....^..v..2..?VW[&s........@}.~B.>D.k..H...r.... .L..i,.
-...=..=..y..[.k..g..0..5.f%..vz|..t.....%.`.|...B..%r0.^k.y.....y.@l$O.....?...J..qc&.........Z.^&..F.....w.">7..	...[.......2.&........>......s.....5
-.n$X.....l.#...... ..Q..u..jBI.Z.Eb$9.$.._...!.........~"Xx<....);........Z.
-.y/E]......K......... .@s.3.\.
-.i.v...#.O<..^.F.	...?..:s...).....e......*..F.Kz..i.jk..xx...#....|.U.!.......X.....@......0.....*...l.v..G)T...9...M.....i.H ..=	.a.hp..&8..L..`.s..d_o.~.T ./.......9..	;F81.......S.{.....1rE..o...`..............c+U...}.{7..Y....Q4.#..(.c]Q...[..8..$u.b...=..6.....~..9..H....R
-.9x*q....h0......O......q..Fb)..E..m..=.M.....W.Yk>.......;.2eys..E.....=q.;.k ....R.f.(./^F....4.c..*Y.4....es.....TX`nh..L.z.6....(.X.>c.V.0z........GF%.%..l4P.......@.^Q........46.g.#.n...e.k.._..>.T+.S...t}....
-----
-
-Notice that you cannot see any detail about the communication since it happened through TLS.
-
-Now, let's disable _TLS_:
-
-[source, bash]
-----
-kubectl create -f istiofiles/disable-mtls.yml
-----
-
-And execute again:
-
-[source, bash, subs="+macros,+attributes"]
-----
-curl http://istio-ingressgateway-istio-system.{appdomain}/{path}
-customer => preference => recommendation v1 from 'b87789c58-mfrhr': 2
-----
-
-And again check `tcpdump` output:
 
 [source, bash]
 ----
@@ -107,14 +67,50 @@ x-b3-spanid: ce289e960a639d11
 x-b3-sampled: 1
 ----
 
-Now, you can see that since there is no _TLS_ enabled, the information is not shadowed but in clear.
+Notice that you can see the details about the communication.
+
+Now, let's enable _TLS_:
+
+[source, bash]
+----
+kubectl create -f istiofiles/enable-mtls.yml
+----
+
+And execute again:
+
+[source, bash, subs="+macros,+attributes"]
+----
+curl $(minikube ip):$INGRESS_PORT/{path}
+
+customer => preference => recommendation v1 from 'b87789c58-mfrhr': 2
+----
+
+And again check `tcpdump` output:
+
+[source, bash]
+----
+14:24:55.078222 IP (tos 0x0, ttl 64, id 32578, offset 0, flags [DF], proto TCP (6), length 967)
+    172.17.0.15.33260 > customer-7dcd544ff9-652ds.8080: Flags [P.], cksum 0x5bf5 (incorrect -> 0x595e), seq 2211080917:2211081832, ack 2232186801, win 391, options [nop,nop,TS val 5958433 ecr 5779275], length 915: HTTP
+E....B@.@._........
+......j...w.....[......
+.Z.!.X/K.............w$.?....&T.`n.....UX.C&)Cj....y..{.&..I..	..<.
+.....A..q.;...o.9+.4..;...6|".......M.4Wm.:}.....^..v..2..?VW[&s........@}.~B.>D.k..H...r.... .L..i,.
+...=..=..y..[.k..g..0..5.f%..vz|..t.....%.`.|...B..%r0.^k.y.....y.@l$O.....?...J..qc&.........Z.^&..F.....w.">7..	...[.......2.&........>......s.....5
+.n$X.....l.#...... ..Q..u..jBI.Z.Eb$9.$.._...!.........~"Xx<....);........Z.
+.y/E]......K......... .@s.3.\.
+.i.v...#.O<..^.F.	...?..:s...).....e......*..F.Kz..i.jk..xx...#....|.U.!.......X.....@......0.....*...l.v..G)T...9...M.....i.H ..=	.a.hp..&8..L..`.s..d_o.~.T ./.......9..	;F81.......S.{.....1rE..o...`..............c+U...}.{7..Y....Q4.#..(.c]Q...[..8..$u.b...=..6.....~..9..H....R
+.9x*q....h0......O......q..Fb)..E..m..=.M.....W.Yk>.......;.2eys..E.....=q.;.k ....R.f.(./^F....4.c..*Y.4....es.....TX`nh..L.z.6....(.X.>c.V.0z........GF%.%..l4P.......@.^Q........46.g.#.n...e.k.._..>.T+.S...t}....
+----
+
+
+Now, you can see that since there is  _TLS_ enabled, the information is now shadowed.
 
 [#restore]
 == Clean Up
 
 [source,bash]
 ----
-kubectl delete -f istiofiles/disable-mtls.yml
+kubectl delete -f istiofiles/enable-mtls.yml
 ----
 
 or you can run:

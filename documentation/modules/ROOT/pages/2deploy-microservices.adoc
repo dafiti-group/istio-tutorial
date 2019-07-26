@@ -19,39 +19,19 @@ endif::workshop[]
 [#deploycustomer]
 == Deploy customer
 
-Make sure you are logged in
+Make sure you have setup the project/namespace
 
 [source,bash,subs="+macros,+attributes"]
 ----
-oc whoami
-or
-kubectl config current-context
-----
-
-and you have setup the project/namespace
-
-[source,bash,subs="+macros,+attributes"]
-----
-oc new-project tutorial{namespace-suffix}
-or
 kubectl create namespace tutorial{namespace-suffix}
 kubectl config set-context $(kubectl config current-context) --namespace=tutorial{namespace-suffix}
 ----
-
-ifndef::workshop[]
-Give the tutorial project the required privileges.
-
-[source,bash,subs="+macros,+attributes"]
-----
-oc adm policy add-scc-to-user privileged -z default -n tutorial{namespace-suffix}
-----
-endif::workshop[]
 
 Then clone the git repository
 
 [source,bash,subs="+macros,+attributes"]
 ----
-git clone https://github.com/redhat-developer-demos/istio-tutorial
+git clone https://github.com/rafabene/istio-tutorial
 cd istio-tutorial
 ----
 
@@ -62,7 +42,15 @@ Make sure `istioctl` is in your `PATH`:
 [source,bash,subs="+macros,+attributes"]
 ----
 $ istioctl version
-version.BuildInfo{Version:"1.1.9", GitRevision:"879413c25b871ae6fd0df82bea1605baf12cba2e", User:"root", Host:"161bf1f4-8ef6-11e9-887b-0a580a2c0403", GolangVersion:"go1.10.4", DockerHub:"docker.io/istio", BuildStatus:"Clean", GitTag:"1.1.8-4-g879413c"}
+client version: 1.2.2
+citadel version: 1.2.2
+egressgateway version: 1.2.2
+galley version: 1.2.2
+ingressgateway version: 1.2.2
+pilot version: 1.2.2
+policy version: 1.2.2
+sidecar-injector version: 1.2.2
+telemetry version: 1.2.2
 ----
 
 === Deploy Customer 
@@ -73,11 +61,6 @@ Now let's deploy the customer pod with its sidecar
 
 [source,bash,subs="+macros,+attributes"]
 ----
-oc apply -f <(istioctl kube-inject -f link:{github-repo}/{customer-repo}/kubernetes/Deployment.yml[{customer-repo}/kubernetes/Deployment.yml]) -n tutorial{namespace-suffix}
-oc create -f link:{github-repo}/{customer-repo}/kubernetes/Service.yml[{customer-repo}/kubernetes/Service.yml] -n tutorial{namespace-suffix}
-
-or
-
 kubectl apply -f <(istioctl kube-inject -f link:{github-repo}/{customer-repo}/kubernetes/Deployment.yml[{customer-repo}/kubernetes/Deployment.yml]) -n tutorial{namespace-suffix}
 kubectl create -f link:{github-repo}/{customer-repo}/kubernetes/Service.yml[{customer-repo}/kubernetes/Service.yml] -n tutorial{namespace-suffix}
 ----
@@ -89,12 +72,8 @@ Since the `customer` service is the one our users will interact with, let's add 
 ifndef::workshop[]
 [source,bash,subs="+macros,+attributes"]
 ----
-oc create -f link:{github-repo}/{customer-repo}/kubernetes/Gateway.yml[{customer-repo}/kubernetes/Gateway.yml] -n tutorial{namespace-suffix}
-or
 kubectl create -f link:{github-repo}/{customer-repo}/kubernetes/Gateway.yml[{customer-repo}/kubernetes/Gateway.yml] -n tutorial{namespace-suffix}
 
-oc get pods -w -n tutorial{namespace-suffix}
-or
 kubectl get pods -w -n tutorial{namespace-suffix}
 ----
 endif::workshop[]
@@ -102,12 +81,8 @@ endif::workshop[]
 ifdef::workshop[]
 [source,bash,subs="+macros,+attributes"]
 ----
-envsubst < link:{github-repo}/{customer-repo}/kubernetes/Gateway.workshop.yml[{customer-repo}/kubernetes/Gateway.workshop.yml] | oc create -f - -n tutorial{namespace-suffix}
-or
 envsubst < link:{github-repo}/{customer-repo}/kubernetes/Gateway.workshop.yml[{customer-repo}/kubernetes/Gateway.workshop.yml] | kubectl create -f - -n tutorial{namespace-suffix}
 
-oc get pods -w -n tutorial{namespace-suffix}
-or
 kubectl get pods -w -n tutorial{namespace-suffix}
 ----
 endif::workshop[]
@@ -115,35 +90,6 @@ endif::workshop[]
 IMPORTANT: If your pod fails with `ImagePullBackOff`, it's possible that your current terminal isn't using the proper Docker Environment. See link:#setup-environment[Setup environment].
 
 Wait until the status is `Running` and there are `2/2` pods in the `Ready` column. To exit, press `Ctrl+C`
-
-Then test the customer endpoint
-
-[source,bash,subs="+macros,+attributes"]
-----
-curl istio-ingressgateway-istio-system.{appdomain}/{path}
-----
-
-You should see the following error because the services `preference` and `recommendation` are not yet deployed.
-
-----
-customer => UnknownHostException: preference
-----
-
-Also review the logs
-
-[source,bash,subs="+macros,+attributes"]
-----
-stern $(kubectl get pods|grep customer|awk '{ print $1 }'|head -1) -c customer
-or
-stern "customer-\w" -c customer
-----
-
-You should see a stacktrace containing this cause:
-
-[source,bash,subs="+macros,+attributes"]
-----
-customer-6fc99b7bfd-5st28 customer Caused by: java.net.UnknownHostException: preference
-----
 
 [#deploypreference]
 == Deploy Preference
@@ -154,11 +100,6 @@ Now let's deploy the preference pod with its sidecar
 
 [source,bash,subs="+macros,+attributes"]
 ----
-oc apply -f <(istioctl kube-inject -f link:{github-repo}/{preference-repo}/kubernetes/Deployment.yml[{preference-repo}/kubernetes/Deployment.yml]) -n tutorial{namespace-suffix}
-oc create -f link:{github-repo}/{preference-repo}/kubernetes/Service.yml[{preference-repo}/kubernetes/Service.yml] -n tutorial{namespace-suffix}
-
-or
-
 kubectl apply -f <(istioctl kube-inject -f link:{github-repo}/{preference-repo}/kubernetes/Deployment.yml[{preference-repo}/kubernetes/Deployment.yml])  -n tutorial{namespace-suffix}
 kubectl create -f link:{github-repo}/{preference-repo}/kubernetes/Service.yml[{preference-repo}/kubernetes/Service.yml] -n tutorial{namespace-suffix}
 ----
@@ -167,42 +108,10 @@ kubectl create -f link:{github-repo}/{preference-repo}/kubernetes/Service.yml[{p
 
 [source, bash,subs="+macros,+attributes"]
 ----
-oc get pods -w  -n tutorial{namespace-suffix}
-or
 kubectl get pods -w -n tutorial{namespace-suffix}
 ----
 
 Wait until the status is `Running` and there are `2/2` pods in the `Ready` column. To exit, press `Ctrl+C`
-
-[source,bash,subs="+macros,+attributes"]
-----
-curl istio-ingressgateway-istio-system.{appdomain}/{path}
-----
-
-It will respond with an error since the service `recommendation` is not yet deployed.
-
-NOTE: We could make this a bit more resilient in a future iteration of this tutorial
-
-[source,bash,subs="+macros,+attributes"]
-----
-customer => Error: 503 - preference => UnknownHostException: recommendation
-----
-
-and check out the logs
-
-[source,bash,subs="+macros,+attributes"]
-----
-stern $(kubectl get pods|grep preference|awk '{ print $1 }'|head -1) -c preference
-or
-stern "preference-\w" -c preference
-----
-
-You should see a stacktrace containing this cause:
-
-[source,bash,subs="+macros,+attributes"]
-----
-preference-v1-898764bdb-hz7s6 preference Caused by: java.net.UnknownHostException: recommendation
-----
 
 [#deployrecommendation]
 == Deploy Recommendation
@@ -213,12 +122,6 @@ Now let's deploy the recommendation pod with its sidecar
 
 [source,bash,subs="+macros,+attributes"]
 ----
-oc apply -f <(istioctl kube-inject -f link:{github-repo}/{recommendation-repo}/kubernetes/Deployment.yml[{recommendation-repo}/kubernetes/Deployment.yml])  -n tutorial{namespace-suffix}
-oc create -f link:{github-repo}/{recommendation-repo}/kubernetes/Service.yml[{recommendation-repo}/kubernetes/Service.yml]  -n tutorial{namespace-suffix}
-oc get pods -w -n tutorial{namespace-suffix}
-
-or 
-
 kubectl apply -f <(istioctl kube-inject -f link:{github-repo}/{recommendation-repo}/kubernetes/Deployment.yml[{recommendation-repo}/kubernetes/Deployment.yml]) -n tutorial{namespace-suffix}
 kubectl create -f link:{github-repo}/{recommendation-repo}/kubernetes/Service.yml[{recommendation-repo}/kubernetes/Service.yml] -n tutorial{namespace-suffix}
 kubectl get pods -w -n tutorial{namespace-suffix}
@@ -228,9 +131,13 @@ kubectl get pods -w -n tutorial{namespace-suffix}
 
 Wait until the status is `Running` and there are `2/2` pods in the `Ready` column. To exit, press `Ctrl+C`
 
+Test the customer endpoint
+
 [source,bash,subs="+macros,+attributes"]
 ----
-curl istio-ingressgateway-istio-system.{appdomain}/{path}
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+curl $(minikube ip):$INGRESS_PORT/{path}
 ----
 
 it should now return
@@ -238,15 +145,6 @@ it should now return
 [source,bash,subs="+macros,+attributes"]
 ----
 customer => preference => recommendation v1 from '99634814-sf4cl': 1
-----
-
-and you can monitor the `recommendation` logs with
-
-[source,bash,subs="+macros,+attributes"]
-----
-stern $(kubectl get pods|grep recommendation-v1|awk '{ print $1 }'|head -1) -c recommendation
-or
-stern "recommendation-v1-\w" -c recommendation-v1
 ----
 
 
@@ -267,13 +165,8 @@ Make your changes, save it and then:
 [source,bash]
 ----
 mvn clean package
+eval $(minikube docker-env)
 docker build -t example/{servicename}:v1 .
-
-oc get pods -o jsonpath='{.items[*].metadata.name}' -l app={servicename}
-oc get pods -o jsonpath='{.items[*].metadata.name}' -l app={servicename},version=v1
-oc delete pod -l app={servicename},version=v1 -n tutorial{namespace-suffix}
-
-or
 
 kubectl get pods -o jsonpath='{.items[*].metadata.name}' -l app={servicename}
 kubectl get pods -o jsonpath='{.items[*].metadata.name}' -l app={servicename},version=v1
@@ -286,7 +179,5 @@ Based on the Deployment configuration, Kubernetes/OpenShift will recreate the po
 
 [source,bash]
 ----
-oc describe deployment {servicename}  -n tutorial{namespace-suffix}| grep Replicas
-or
 kubectl describe deployment {servicename} -n tutorial{namespace-suffix} | grep Replicas
 ----

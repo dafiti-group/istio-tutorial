@@ -1,25 +1,27 @@
 apiVersion: "config.istio.io/v1alpha2"
-kind: denier
+kind: handler
 metadata:
-  name: denycustomerhandler
+  name: denyrecommendationhandler
 spec:
-  status:
-    code: 7
-    message: Not allowed
+  compiledAdapter: denier
+  params:
+    status:
+      code: 7
+      message: Not allowed
 ---
 apiVersion: "config.istio.io/v1alpha2"
-kind: checknothing
+kind: instance
 metadata:
-  name: denycustomerrequests
+  name: denyrecommendationrequest
 spec:
+  compiledTemplate: checknothing
 ---
 apiVersion: "config.istio.io/v1alpha2"
 kind: rule
 metadata:
-  name: denycustomer
+  name: denyrecommendation
 spec:
-  match: destination.labels["app"] == "preference" && source.labels["app"]=="customer"
+  match: destination.labels["app"] == "recommendation" 
   actions:
-  - handler: denycustomerhandler.denier
-    instances: [ denycustomerrequests.checknothing ]
-
+  - handler: denyrecommendationhandler
+    instances: [ denyrecommendationrequest ]

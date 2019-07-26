@@ -18,19 +18,19 @@ refresher.
 [#howkiali]
 == How does Kiali work?
 
-Kiali taps into the data provided by Istio and OpenShift to generate its
+Kiali taps into the data provided by Istio to generate its
 visualizations. It fetches ingress data (such as request tracing with Jaeger),
 the listing and data of the services, health indexes, and so on.
 
 Kiali runs as a service together with Istio, and does not require any changes
-to Istio or Openshift configuration (besides the ones required to install
+to Istio  configuration (besides the ones required to install
 Istio).
 
 ifndef::workshop[]
 [#updatekiali]
 == Update kiali?
 
-A prerequisite for installing Kiali is that you must have OpenShift and Istio
+A prerequisite for installing Kiali is that you must have Istio
 installed and configured.
 
 Update Kiali with the following commands:
@@ -38,8 +38,9 @@ Update Kiali with the following commands:
 [source, bash]
 ----
 # URLS for Jaeger and Grafana
-export JAEGER_URL="http://tracing-istio-system.$(minishift ip).nip.io"
-export GRAFANA_URL="http://grafana-istio-system.$(minishift ip).nip.io"
+export JAEGER_URL="http://jaeger-query:16686"
+export GRAFANA_URL="http://grafana:3000"
+export PROMETHEUS_URL="http://prometheus:9090"
 
 echo "apiVersion: v1
 kind: ConfigMap
@@ -54,39 +55,31 @@ metadata:
 data:
   config.yaml: |
     istio_namespace: istio-system
+    auth: 
+      strategy: "login"
     server:
       port: 20001
+    web_root: /kiali
     external_services:
-      istio:
-        url_service_version: http://istio-pilot:8080/version
       jaeger:
         url: $JAEGER_URL
       grafana:
-        url:  $GRAFANA_URL"| kubectl apply -f -; oc delete pod -l app=kiali -n istio-system
-
+        url:  $GRAFANA_URL
+      prometheus:
+        url: $PROMETHEUS_URL" | kubectl apply -f -; kubectl delete pod -l app=kiali -n istio-system
 
 ----
 
 
-So now we can access Kiali at `kiali-istio-system.$(minishift ip).nip.io`, so
+So now we can access Kiali at `http://localhost:20001/kiali/console`, so
 let's do it:
 
 [source, bash,subs="+macros,+attributes"]
 ----
-open http://kiali-istio-system.{appdomain}/kiali
-----
-endif::workshop[]
+kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=kiali -o jsonpath='{.items[0].metadata.name}') 20001:20001
 
-// Workshop address
-ifdef::workshop[]
-So now we can access Kiali, so
-let's do it:
-
-[source, bash,subs="+macros,+attributes"]
+open  http://localhost:20001/console
 ----
-open https://kiali-istio-system.{appdomain}/
-----
-endif::workshop[]
 
 image:kiali-login.png[Login Page]
 

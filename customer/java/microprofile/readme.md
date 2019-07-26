@@ -1,7 +1,7 @@
 Customer
 ========
 
-This is the customer microservice, part of the Istio Tutorial demo. Even though this microservice is meant to be executed within a Container on a Pod on Kubernetes/OpenShift, it can still be executed on bare metal.
+This is the customer microservice, part of the Istio Tutorial demo. Even though this microservice is meant to be executed within a Container on a Pod on Kubernetes, it can still be executed on bare metal.
 
 This is a regular Wildfly Swarm application, with OpenTracing and Jaeger dependencies to provide distributed tracing capabilities.
 

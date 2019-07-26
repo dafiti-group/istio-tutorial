@@ -23,11 +23,14 @@ At the time of writing this chapter, only the JWT mechanism is supported.
 
 Now it is time to enable end-user authentication.
 
-The first thing you need to do is run `curl istio-ingressgateway-istio-system.$(minishift ip).nip.io` and validate that now it is still possible to communicate between all services without been authenticated.
+The first thing you need to do is run the `curl` command and validate that now it is still possible to communicate between all services without been authenticated.
 
 [source, bash, subs="+macros,+attributes"]
 ----
-curl http://istio-ingressgateway-istio-system.{appdomain}/{path}
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
+curl $(minikube ip):$INGRESS_PORT/{path}
+
 
 customer => preference => recommendation v1 from 'b4d67bcb7-7rp88': 4
 ----
@@ -43,7 +46,7 @@ Then let's run the curl again:
 
 [source, bash, subs="+macros,+attributes"]
 ----
-curl http://istio-ingressgateway-istio-system.{appdomain}/{path}
+curl $(minikube ip):$INGRESS_PORT/{path}
 
 Origin authentication failed.%`
 ----
@@ -63,7 +66,7 @@ Then let's repeat the request but passing the token stored in `token` variable.
 
 [source, bash, subs="+macros,+attributes"]
 ----
-curl -H "Authorization: Bearer $token" http://istio-ingressgateway-istio-system.{appdomain}/{path}
+curl -H "Authorization: Bearer $token" $(minikube ip):$INGRESS_PORT/{path}
 
 customer => preference => recommendation v1 from 'b4d67bcb7-7rp88': 4
 ----

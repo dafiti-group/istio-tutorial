@@ -1,19 +1,20 @@
-apiVersion: "config.istio.io/v1alpha2"
-kind: memquota
+apiVersion: config.istio.io/v1alpha2
+kind: handler
 metadata:
-  name: handler
+  name: quotahandler
+  namespace: istio-system
 spec:
-  quotas:
-  - name: requestcount.quota.istio-system
-    # default rate limit is 5000qps
-    maxAmount: 5000
-    validDuration: 1s
-    # The first matching override is applied.
-    # A requestcount instance is checked against override dimensions.
-    overrides:
-    - dimensions:
-        destination: recommendation
-        destinationVersion: v2
-        source: preference
-      maxAmount: 1
+  compiledAdapter: memquota
+  params:
+    quotas:
+    - name: requestcountquota.instance.istio-system
+      # default rate limit is 5000qps
+      maxAmount: 5000
       validDuration: 1s
+      # The first matching override is applied.
+      # A requestcount instance is checked against override dimensions.
+      overrides:
+      - dimensions:
+          destination: recommendation
+        maxAmount: 1
+        validDuration: 10s
