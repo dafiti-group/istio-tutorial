@@ -1,34 +1,9 @@
 #! /bin/bash
-export JAEGER_URL="http://jaeger-query:16686"
-export GRAFANA_URL="http://grafana:3000"
-export PROMETHEUS_URL="http://prometheus:9090"
 
-echo "apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kiali
-  namespace: istio-system
-  labels:
-    app: kiali
-    chart: kiali
-    heritage: Tiller
-    release: istio
-data:
-  config.yaml: |
-    istio_namespace: istio-system
-    auth: 
-      strategy: login
-    server:
-      port: 20001
-    web_root: /kiali
-    external_services:
-      jaeger:
-        url: $JAEGER_URL
-      grafana:
-        url:  $GRAFANA_URL
-      prometheus:
-        url: $PROMETHEUS_URL" | kubectl apply -f -; kubectl delete pod -l app=kiali -n istio-system
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    gio open http://localhost:20001/console
+elif [[ "$OSTYPE" == "darwin"* ]]; then 
+    open http://localhost:20001/console
+fi
 
 kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=kiali -o jsonpath='{.items[0].metadata.name}') 20001:20001 &
-
-open  http://localhost:20001/console
