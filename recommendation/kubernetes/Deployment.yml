@@ -41,16 +41,16 @@ spec:
             command:
             - curl
             - localhost:8080/health          
-          initialDelaySeconds: 3
-          periodSeconds: 5
-          timeoutSeconds: 5
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 2
         readinessProbe:
           exec:
             command:
             - curl
             - localhost:8080/health          
-          initialDelaySeconds: 3
-          periodSeconds: 5
-          timeoutSeconds: 5
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 2
         securityContext:
           privileged: false

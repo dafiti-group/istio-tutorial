@@ -8,7 +8,7 @@ ifndef::workshop[]
 * xref:1setup.adoc[1. Setup]
 ** xref:1setup.adoc#prerequisite[Prerequisites]
 ** xref:1setup.adoc#minikube[Setup Minikube]
-** xref:1setup.adoc#istioinstallation[Install Istio]
+** xref:1setup.adoc#upstreamistioinstallation[Install Istio]
 endif::workshop[]
 
 * xref:2deploy-microservices.adoc[2. Deploy Microservices]
