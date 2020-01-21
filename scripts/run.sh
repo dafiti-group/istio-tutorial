@@ -6,7 +6,7 @@ url=$1
 if [ -z "$url" ]
 then
     #url="$(minikube ip):$INGRESS_PORT/customer"
-    url="192.168.100.100:$INGRESS_PORT/customer"
+    url="127.0.0.1/customer"
 fi
 
 while true

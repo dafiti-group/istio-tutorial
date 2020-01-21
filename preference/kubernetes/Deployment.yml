@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -20,7 +20,7 @@ spec:
         sidecar.istio.io/inject: "true"
     spec:
       containers:
-      - env:      
+      - env:
         - name: JAVA_OPTIONS
           value: -Xms15m -Xmx15m -Xmn15m
         image: quay.io/rhdevelopers/istio-tutorial-preference:v1
@@ -39,7 +39,7 @@ spec:
           exec:
             command:
             - curl
-            - localhost:8080/health          
+            - localhost:8080/health
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
@@ -48,7 +48,7 @@ spec:
           exec:
             command:
             - curl
-            - localhost:8080/health          
+            - localhost:8080/health
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2

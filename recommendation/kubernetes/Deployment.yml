@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -23,7 +23,7 @@ spec:
       - env:
         - name: JAVA_OPTIONS
           value: -Xms15m -Xmx15m -Xmn15m
-        name: recommendation          
+        name: recommendation
         image: quay.io/rhdevelopers/istio-tutorial-recommendation:v1
         imagePullPolicy: IfNotPresent
         ports:
@@ -40,7 +40,7 @@ spec:
           exec:
             command:
             - curl
-            - localhost:8080/health          
+            - localhost:8080/health
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
@@ -48,7 +48,7 @@ spec:
           exec:
             command:
             - curl
-            - localhost:8080/health          
+            - localhost:8080/health
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
