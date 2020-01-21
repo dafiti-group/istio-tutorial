@@ -27,4 +27,4 @@ kubectl create -f preference/kubernetes/Service.yml -n tutorial
 kubectl create -f recommendation/kubernetes/Service.yml -n tutorial
 kubectl create -f customer/kubernetes/Gateway.yml -n tutorial
 
-"name": "http2","nodePort": "31460","port": "80","protocol": "TCP","targetPort": "80"
+curl 127.0.0.1/customer
