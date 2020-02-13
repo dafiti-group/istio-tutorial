@@ -30,3 +30,6 @@ kubectl create -f customer/kubernetes/Gateway.yml -n tutorial
 curl 127.0.0.1/customer
 
 kubectl -n istio-system port-forward (kubectl -n istio-system get pod -l app=kiali -o jsonpath='{.items[0].metadata.name}') 20001:20001
+
+http://rafabene.com/istio-tutorial/istio-tutorial/1.2.x/2deploy-microservices.html
+https://docs.google.com/presentation/d/1WhbZAFZsbV_c_VGi9RqDAu-lIiqth108POjJ7XLbmJw/edit#slide=id.g432884ce64_4_1420
